@@ -36,7 +36,8 @@ The dataset contains user queries such as flight bookings, airline information, 
 
 2. **Model Training**
 
-   * Train each classifier on the training dataset
+   * Train the Logistic Regression classifier on the training dataset
+   * Test the Logistic Regression classifier on the test dataset
 
 3. **Evaluation**
 
@@ -55,7 +56,6 @@ The dataset contains user queries such as flight bookings, airline information, 
 
 * Python
 * Scikit-learn
-* XGBoost
 * Pandas
 * NumPy
 * Matplotlib / Seaborn
