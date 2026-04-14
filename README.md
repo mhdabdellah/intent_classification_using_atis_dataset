@@ -77,7 +77,7 @@ The dataset contains user queries such as flight bookings, airline information, 
 1. Clone the repository:
 
 ```
-git clone <your-repo-link>
+git clone https://github.com/mhdabdellah/intent_classification_using_atis_dataset.git
 ```
 
 2. Install dependencies:
