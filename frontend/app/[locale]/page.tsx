@@ -12,7 +12,7 @@ import { getTranslations } from "@/lib/translations";
 import { cn } from "@/lib/utils";
 
 const defaultApiUrl =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+  process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
 export default function Home() {
   const params = useParams<{ locale?: string }>();
@@ -103,12 +103,22 @@ export default function Home() {
     setApiTest({ status: "idle" });
     setError(null);
 
+    console.log("Testing API:", target);
+
     try {
       const baseUrl = target.replace(/\/$/, "");
-      const response = await fetch(`${baseUrl}/api/health`, {
+      const fullUrl = `${baseUrl}/api/health`;
+      console.log("Making request to:", fullUrl);
+
+      const response = await fetch(fullUrl, {
         method: "GET"
       });
+
+      console.log("Response status:", response.status);
+      console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+
       const data = await response.json().catch(() => ({}));
+      console.log("Response data:", data);
 
       if (!response.ok) {
         throw new Error(
@@ -123,6 +133,7 @@ export default function Home() {
           : t.errors.connected
       });
     } catch (err) {
+      console.error("API test error:", err);
       setApiTest({
         status: "error",
         message:
@@ -145,18 +156,32 @@ export default function Home() {
         throw new Error(t.errors.apiNotSet);
       }
 
+      console.log("Using API URL:", baseUrl);
+
       if (mode === "single") {
         const text = singleText.trim();
         if (!text) {
           throw new Error(t.errors.queryEmpty);
         }
 
-        const response = await fetch(`${baseUrl}/api/predict`, {
+        console.log("Single prediction for text:", text);
+        const requestBody = { text };
+        console.log("Request body:", requestBody);
+
+        const fullUrl = `${baseUrl}/api/predict`;
+        console.log("Making request to:", fullUrl);
+
+        const response = await fetch(fullUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text })
+          body: JSON.stringify(requestBody)
         });
+
+        console.log("Response status:", response.status);
+        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+
         const data = await response.json().catch(() => ({}));
+        console.log("Response data:", data);
 
         if (!response.ok) {
           throw new Error(data?.error || t.errors.predictionFailed);
@@ -173,12 +198,24 @@ export default function Home() {
           throw new Error(t.errors.batchEmpty);
         }
 
-        const response = await fetch(`${baseUrl}/api/predict-batch`, {
+        console.log("Batch prediction for texts:", texts);
+        const requestBody = { texts };
+        console.log("Request body:", requestBody);
+
+        const fullUrl = `${baseUrl}/api/predict-batch`;
+        console.log("Making request to:", fullUrl);
+
+        const response = await fetch(fullUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ texts })
+          body: JSON.stringify(requestBody)
         });
+
+        console.log("Response status:", response.status);
+        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+
         const data = await response.json().catch(() => ({}));
+        console.log("Response data:", data);
 
         if (!response.ok) {
           throw new Error(data?.error || t.errors.batchFailed);
@@ -196,6 +233,7 @@ export default function Home() {
         );
       }
     } catch (err) {
+      console.error("Prediction error:", err);
       setError(err instanceof Error ? err.message : t.errors.general);
     } finally {
       setIsLoading(false);
@@ -319,7 +357,7 @@ export default function Home() {
                   id="api-url"
                   value={apiInput}
                   onChange={(event) => setApiInput(event.target.value)}
-                  placeholder="http://localhost:5000"
+                  placeholder="http://127.0.0.1:8000"
                   className={cn(
                     "w-full flex-1 rounded-full border border-[var(--border)] bg-white/80 px-4 py-2 text-sm text-[var(--fg)]",
                     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]",

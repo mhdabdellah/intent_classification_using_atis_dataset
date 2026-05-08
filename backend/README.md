@@ -12,6 +12,8 @@ The API loads these artifacts once at startup:
 - `models/vectorizer.pkl`
 - `models/clf_model.pkl`
 
+The frontend should connect to the backend at `http://127.0.0.1:6000`.
+
 ## Run locally
 
 ```bash
